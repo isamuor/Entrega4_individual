@@ -1,0 +1,25 @@
+{
+    "name": "segundaentregatarea",
+    "version": "1.0.1",
+    "description": "Historias de usuario de la segunda entrega",
+    "main": "src/app.js",
+    "scripts": {
+        "start": "node src/app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Isabel Cristina Munoz",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^3.0.5",
+        "body-parser": "^1.18.3",
+        "bootstrap": "^4.3.1",
+        "express": "^4.16.4",
+        "express-session": "^1.15.6",
+        "hbs": "^4.0.3",
+        "jquery": "^3.3.1",
+        "mongoose": "^5.5.0",
+        "mongoose-unique-validator": "^2.0.2",
+        "nodemon": "^1.18.10",
+        "popper.js": "^1.14.7"
+    }
+}

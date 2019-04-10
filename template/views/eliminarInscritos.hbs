@@ -1,0 +1,22 @@
+{{>header}}
+
+<div class="container px-5">
+    <form action="/eliminado" method="post">
+        <div class="form-row px-5 my-5  border border-dark ">
+            <div class="form-group col-md-6 mt-5">
+               Identificación del usuario que desea eliminar:
+                <input type="number" class="form-control" size="50" maxlength="50" placeholder="Número de identificacion" name="id" required>
+            </div>
+            <div class="form-group col-md-6 mt-5">
+                Seleccione el curso del que desea eliminar el usuario:
+                <select class="form-control" name="nombreCurso" required>
+                     {{{mostrarNombres  listaCursos}}}
+                </select>
+            </div>
+            <div class="form-row px-auto mx-auto">
+                <button class="btn btn-dark px-4 mx-5 mb-5"> Eliminar </button>
+            </div>
+    </form>
+</div>
+
+{{>footer}}

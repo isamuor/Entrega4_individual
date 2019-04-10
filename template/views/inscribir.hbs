@@ -1,0 +1,26 @@
+{{>header}}
+
+<div class="row mr-0 justify-content-md-center align-items-center">
+    <div class="col-sm-12 p-4">
+        <h2> Bienvenido a la aplicación para inscripción a un curso </h2>
+        <p style="font-size: 16pt">Seleccione el curso al cual se desea inscribir: </p>
+    </div>
+
+</div>
+
+<form action="/inscritos" method="post">
+    
+    <div class="form-row px-4">
+        <div class="form-group col-md-6">
+            Curso:
+            <select class="form-control" name="nombreCurso" required>
+                {{{mostrarNombres  listaCursos}}}
+            </select>
+        </div>
+    </div>
+    <div class="form-row px-4">
+        <button class="btn btn-primary"> Realizar la inscripción </button>
+    </div>
+</form>
+
+{{>footer}}

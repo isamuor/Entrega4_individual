@@ -1,0 +1,27 @@
+{{>header}}
+
+<div class="container">
+    <h2>Bienvenido</h2>
+    <br>
+    <p>Ingrese los datos del siguiente formulario</p>
+    <form action="/registrar" method="post">
+        <div class="form-group">
+            <label> Nombre </label>
+            <input type="text" class="form-control" name="nombre" placeholder="Nombre del usuario" required>
+            <br>
+            <label> Documento </label>
+            <input type="number" class="form-control" name="id" placeholder="Documento de identidad" required>
+            <br>
+            <label> E-mail </label>
+            <input type="email" class="form-control" name="email" placeholder="E-mail" required>
+            <br>
+            <label> Telefono </label>
+            <input type="number" class="form-control" name="tel" placeholder="Telefono" required>
+            <br>          
+            <button class="btn btn-dark">Registrar</button>
+        </div>
+    </form>
+</div>
+
+
+{{>footer}}
