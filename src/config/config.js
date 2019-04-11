@@ -1,8 +1,14 @@
 process.env.PORT = process.env.PORT || 3000;
-//process.env.URLDB = URLDB || 'mongodb://localhost:27017/Education';
+//process.env.URLDB = 'mongodb://localhost:27017/Education';
 
+if (!process.env.URLDB) {
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'local';
+    process.env.URLDB = 'mongodb://localhost:27017/Education'
+
+}
+
+/*process.env.NODE_ENV = process.env.NODE_ENV || 'local';
+
 
 let urlDB
 if (process.env.NODE_ENV === 'local'){
@@ -12,4 +18,4 @@ else {
 	urlDB = 'mongodb+srv://isamuor:S3N6R8qeuLapq9FP@cluster0-fts48.mongodb.net/Education?retryWrites=true'
 }
 
-process.env.URLDB = urlDB
+process.env.URLDB = urlDB*/
