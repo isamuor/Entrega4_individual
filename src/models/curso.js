@@ -46,6 +46,10 @@ const cursoSchema = new Schema({
         default: 'disponible'
 
     },
+    programa: {
+        type: Buffer,
+    }
+
 
 
 

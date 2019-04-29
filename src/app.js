@@ -6,6 +6,9 @@ const path = require('path');
 const hbs = require('hbs');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+//sockets
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 //### Para usar las variables de sesión
 const session = require('express-session')
 
@@ -45,6 +48,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 //Routes
 app.use(require('./routes/index'));
 
+//Sockets
+/*io.on('connection', client => {
+    console.log("Un usuario se ha conectado");
+    client.emit("mensaje", "Bienvenido")
+    client.on("mensaje", (informacion) => {
+        console.log(informacion);
+    })
+});*/
+
 
 mongoose.connect(process.env.URLDB, { useNewUrlParser: true }, (err, result) => {
     if (err) {
@@ -54,6 +66,6 @@ mongoose.connect(process.env.URLDB, { useNewUrlParser: true }, (err, result) => 
 });
 
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
     console.log('Escuchando en el puerto' + process.env.PORT);
 })

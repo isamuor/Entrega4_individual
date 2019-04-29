@@ -7,11 +7,15 @@ const Curso = require('./../models/curso')
 const Inscrito = require('./../models/inscrito')
 const bcrypt = require('bcrypt');
 const session = require('express-session')
-
+const multer = require('multer')
 const dirViews = path.join(__dirname, '../../template/views');
 const dirPartials = path.join(__dirname, '../../template/partials');
+const sgMail = require('@sendgrid/mail');
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 require('./../helpers/helpers')
+require('./../config/config');
 
 //hbs
 app.set('view engine', 'hbs');
@@ -32,14 +36,16 @@ app.get('/', (req, res) => res.render('index', { nombre: req.session.nombre }));
 
 app.get('/registro', (req, res) => res.render('registro', { nombre: req.session.nombre }));
 
-app.post('/registrar', (req, res) => {
-    let aspirante = new Aspirante({
-        nombre: req.body.nombre,
-        documento: req.body.id,
-        email: req.body.email,
-        telefono: req.body.tel
-    })
 
+app.post('/registrar', (req, res) => {
+
+    let aspirante = new Aspirante({
+            nombre: req.body.nombre,
+            documento: req.body.id,
+            email: req.body.email,
+            telefono: req.body.tel
+        })
+        //console.log(aspirante);
     aspirante.save((err, result) => {
         if (err) {
             return res.render('registropost', {
@@ -47,6 +53,22 @@ app.post('/registrar', (req, res) => {
                 nombre: req.session.nombre,
             })
         }
+        const msg = {
+            to: req.body.email,
+            from: 'isamuor90@gmail.com',
+            subject: 'Bienvenido a plataforma virtual',
+            text: 'Bienvenido',
+            html: `<h1><strong>Bienvenido a la plataforma de cursos virtuales</strong></h1> <br><br> 
+                            <h2>Ahora puede inscribirse en los cursos disponibles</h2><br><br>
+                            <h3>Datos de registro</h3>
+                            <ul>
+                            <li type="circle">Nombre: ${req.body.nombre} </li>
+                            <li type="circle">Identificación: ${ req.body.id} </li>
+                            <li type="circle">Email: ${req.body.email} </li*/>
+                            <li type="circle">Telefono: ${req.body.tel} </li>
+                            </ul>`
+        };
+        sgMail.send(msg);
         res.render('registropost', {
             mensaje: `<div class = 'alert-success'\
             role = 'alert'> <h4 class="alert-heading"> <br> Registro realizado con éxito </h4><hr></div>`,
@@ -70,14 +92,46 @@ app.post('/formularioCrear', (req, res) => {
 
 })
 
-app.post('/crear', (req, res) => {
+/*var storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, "public/uploads")
+    },
+    filename: function(req, file, cb) {
+        cb(null, req.body.nombre + '_' + req.body.id + '_' + path.extname(file.originalname))
+            //cb(null, file.originalname)
+    }
+})*/
+
+//var upload = multer({ storage: storage })
+
+var upload = multer({
+    // Validación del archivo del lado del cliente
+    limits: {
+        filesize: 1000000 // 1MB
+    },
+
+    fileFilter(req, file, cb) {
+        // Validación del formato de archivo del lado del servidor
+        if (!file.originalname.match(/\.(pdf)$/)) {
+            return cb(new Error('No es un archivo válido'))
+        }
+        // To accept the file pass `true`, like so:
+        cb(null, true)
+    }
+
+})
+
+app.post('/crear', upload.single('archivo'), (req, res) => {
+    //console.log(req.file);
+
     let curso = new Curso({
         nombre: req.body.nombre,
         id: req.body.id,
         valor: req.body.valor,
         descripcion: req.body.descripcion,
         modalidad: req.body.modalidad,
-        intensidad: req.body.intensidad
+        intensidad: req.body.intensidad,
+        programa: req.file.buffer
     })
 
     curso.save((err, result) => {
@@ -158,6 +212,33 @@ app.post('/inscritos', (req, res) => {
                     if (err) {
                         return console.log(err);
                     }
+
+                    Curso.findOne({ nombre: req.body.nombreCurso }, (err, cursito) => {
+                        const msg = {
+                            to: usuario.email,
+                            from: 'isamuor90@gmail.com',
+                            subject: `Bienvenido al curso: ${cursito.nombre}`,
+                            text: 'Bienvenido',
+                            html: `<h1><strong>Usted se ha inscrito de manera exitosa al curso  ${req.body.nombreCurso} </strong></h1> <br><br> 
+                                        
+                                        <h3>Información del Curso</h3>
+                                        <ul>
+                                        <li type="circle">Nombre:${cursito.nombre} </li>
+                                        <li type="circle">Valor: ${cursito.valor} </li>
+                                        <li type="circle">Descripción: ${cursito.descripcion} </li*/>
+                                        </ul>`,
+                            attachments: [{
+                                content: cursito.programa.toString('base64'),
+                                filename: 'programa.pdf',
+                                //type: 'plain/text',
+                                disposition: 'attachment',
+                                //content_id: 'mytext'
+                            }, ],
+
+                        };
+                        sgMail.send(msg);
+                    })
+
                     res.render('inscritos', {
                         bandera: true,
                         texto: `<div class = 'alert-success px-4'
